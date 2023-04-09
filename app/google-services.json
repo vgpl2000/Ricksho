@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "375550829701",
+    "project_id": "ricksho-aa8af",
+    "storage_bucket": "ricksho-aa8af.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:375550829701:android:8cdb950610f1f9488035ec",
+        "android_client_info": {
+          "package_name": "com.example.ricksho"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "375550829701-tvh31ifflt7k1atosaninml2mgh731jd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADYhWkyxPG61AgaF8GQqVWiEAoewWksqs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "375550829701-tvh31ifflt7k1atosaninml2mgh731jd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
