@@ -92,6 +92,7 @@ public class user_login extends AppCompatActivity {
                     editTextPassword.setError("Password cannot be Empty!");
                 }
                 else{
+                    //signing in
                     FirebaseUser currentUser=mAuth.getCurrentUser();
                     if(currentUser!=null){
                         mAuth.signInWithEmailAndPassword(txtemail,txtpass)
@@ -107,13 +108,14 @@ public class user_login extends AppCompatActivity {
                                     }
                                 });
                     }else{
+                        //creating account
                         mAuth.createUserWithEmailAndPassword(txtemail,txtpass)
                                 .addOnCompleteListener(user_login.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
                                     FirebaseUser user=mAuth.getCurrentUser();
-                                    Toast.makeText(user_login.this, "User signed In", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(user_login.this, "User created", Toast.LENGTH_SHORT).show();
                                 }else{
                                     Toast.makeText(user_login.this, "Authentication failed.",
                                             Toast.LENGTH_SHORT).show();
