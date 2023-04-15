@@ -12,6 +12,9 @@
         android:theme="@style/Theme.Ricksho"
         tools:targetApi="31">
         <activity
+            android:name=".user_login"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
