@@ -1,11 +1,13 @@
 package com.example.ricksho;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
@@ -19,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -27,6 +30,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.SignInMethodQueryResult;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.regex.Pattern;
@@ -35,6 +39,8 @@ public class user_login extends AppCompatActivity {
     Button btn_login;
     EditText email,f_name,l_name;
     String txtemail,txtfname,txtlname,txtpass;
+    FirebaseDatabase firebaseDatabase=FirebaseDatabase.getInstance();
+    DatabaseReference reference=firebaseDatabase.getReference("user");
 
     private FirebaseAuth mAuth;
 
@@ -73,7 +79,6 @@ public class user_login extends AppCompatActivity {
 
         FrameLayout loadingView = findViewById(R.id.loading_view);
         LottieAnimationView loadingAnimation = findViewById(R.id.loading_animation);
-        ProgressBar loadingProgress = findViewById(R.id.loading_progress);
 
         btn_login=findViewById(R.id.btn_login);
         email=findViewById(R.id.email);
@@ -98,7 +103,6 @@ public class user_login extends AppCompatActivity {
                     // Show the loading view
                     loadingView.setVisibility(View.VISIBLE);
                     loadingAnimation.playAnimation();
-                    loadingProgress.setVisibility(View.VISIBLE);
                     //mail is available in proper format and now check user is created already or not
                     //signing in
                     FirebaseUser currentUser=mAuth.getCurrentUser();
@@ -113,7 +117,6 @@ public class user_login extends AppCompatActivity {
                                                     // Hide the loading view
                                                     loadingView.setVisibility(View.GONE);
                                                     loadingAnimation.cancelAnimation();
-                                                    loadingProgress.setVisibility(View.INVISIBLE);
 
                                                     textInputLayout.setVisibility(View.VISIBLE);
                                                     editTextPassword.setVisibility(View.VISIBLE);
@@ -125,7 +128,6 @@ public class user_login extends AppCompatActivity {
                                                         // Show the loading view
                                                         loadingView.setVisibility(View.VISIBLE);
                                                         loadingAnimation.playAnimation();
-                                                        loadingProgress.setVisibility(View.VISIBLE);
 
                                                         mAuth.signInWithEmailAndPassword(txtemail,txtpass)
                                                                 .addOnCompleteListener(user_login.this, new OnCompleteListener<AuthResult>() {
@@ -135,14 +137,14 @@ public class user_login extends AppCompatActivity {
                                                                             // Hide the loading view
                                                                             loadingView.setVisibility(View.GONE);
                                                                             loadingAnimation.cancelAnimation();
-                                                                            loadingProgress.setVisibility(View.INVISIBLE);
+
                                                                             Toast.makeText(user_login.this, "User signed In", Toast.LENGTH_SHORT).show();
                                                                         }
                                                                         else {
                                                                             // Hide the loading view
                                                                             loadingView.setVisibility(View.GONE);
                                                                             loadingAnimation.cancelAnimation();
-                                                                            loadingProgress.setVisibility(View.INVISIBLE);
+
                                                                             Toast.makeText(user_login.this, "Authentication failed in sign in",Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     }
@@ -154,7 +156,7 @@ public class user_login extends AppCompatActivity {
                                                     // Hide the loading view
                                                     loadingView.setVisibility(View.GONE);
                                                     loadingAnimation.cancelAnimation();
-                                                    loadingProgress.setVisibility(View.INVISIBLE);
+
                                                     Toast.makeText(user_login.this, "Sign In Failed!", Toast.LENGTH_SHORT).show();
                                                 }
                                             }
@@ -164,7 +166,7 @@ public class user_login extends AppCompatActivity {
                         // Hide the loading view
                         loadingView.setVisibility(View.GONE);
                         loadingAnimation.cancelAnimation();
-                        loadingProgress.setVisibility(View.INVISIBLE);
+
 
                         f_name.setVisibility(View.VISIBLE);
                         l_name.setVisibility(View.VISIBLE);
@@ -189,28 +191,49 @@ public class user_login extends AppCompatActivity {
                             // Show the loading view
                             loadingView.setVisibility(View.VISIBLE);
                             loadingAnimation.playAnimation();
-                            loadingProgress.setVisibility(View.VISIBLE);
+/*
+                            //Verify that email verified or not
+                            if (mAuth.getCurrentUser().isEmailVerified()) {
+                                //Email verified
+                                Toast.makeText(user_login.this, "User email verified", Toast.LENGTH_SHORT).show();
 
+                            }
+*/
                             mAuth.createUserWithEmailAndPassword(txtemail,txtpass)
                                     .addOnCompleteListener(user_login.this, new OnCompleteListener<AuthResult>() {
                                         @Override
                                         public void onComplete(@NonNull Task<AuthResult> task) {
-                                            if(task.isSuccessful()){
+                                            if(task.isSuccessful()) {
+                                                //Show loading
+                                                loadingView.setVisibility(View.VISIBLE);
+                                                loadingAnimation.playAnimation();
+                                                //verify email by sending verification link to mail
+                                                mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            String uid = mAuth.getCurrentUser().getUid();
+                                                            //Adding to realtime database
+                                                            DatabaseReference ref1 = reference.child(uid);
+                                                            ref1.child("fname").setValue(txtfname);
+                                                            ref1.child("lname").setValue(txtlname);
+                                                            ref1.child("email").setValue(txtemail);
+                                                            ref1.child("password").setValue(txtpass);
+                                                            FirebaseUser user = mAuth.getCurrentUser();
+                                                            Toast.makeText(user_login.this, "Verification link has been sent to your mail id!", Toast.LENGTH_LONG).show();
+                                                            // Hide the loading view
+                                                            loadingView.setVisibility(View.GONE);
+                                                            loadingAnimation.cancelAnimation();
+                                                        }
 
-                                                FirebaseUser user=mAuth.getCurrentUser();
-                                                // Hide the loading view
-                                                loadingView.setVisibility(View.GONE);
-                                                loadingAnimation.cancelAnimation();
-                                                loadingProgress.setVisibility(View.INVISIBLE);
-                                                Toast.makeText(user_login.this, "User created", Toast.LENGTH_SHORT).show();
+
+                                                    }
+                                                });
                                             }else{
-                                                // Hide the loading view
                                                 loadingView.setVisibility(View.GONE);
                                                 loadingAnimation.cancelAnimation();
-                                                loadingProgress.setVisibility(View.INVISIBLE);
 
-                                                Toast.makeText(user_login.this, "Authentication failed.",
-                                                        Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(user_login.this, "User is not created", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });

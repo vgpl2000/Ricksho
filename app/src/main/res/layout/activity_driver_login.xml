@@ -31,10 +31,10 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="56dp"
         android:fontFamily="@font/gotham_book"
         android:letterSpacing="0.1"
-        android:text="Login / Signup"
+        android:text="Register"
         android:textColor="@color/black"
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,14 +43,14 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/email"
+        android:id="@+id/v_number"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="68dp"
-        android:inputType="textEmailAddress"
+        android:layout_marginTop="50dp"
+        android:inputType="textCapCharacters"
         android:background="@drawable/edittext_bg"
         android:fontFamily="@font/gotham_m"
-        android:hint="Email"
+        android:hint="Vehicle Registration NUmber"
         android:letterSpacing="0.1"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
@@ -83,7 +83,7 @@
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email" />
+        app:layout_constraintTop_toBottomOf="@+id/v_number" />
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/l_name"
         android:layout_width="300dp"
@@ -104,6 +104,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/f_name" />
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/email"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:inputType="textCapCharacters"
+        android:background="@drawable/edittext_bg"
+        android:fontFamily="@font/gotham_m"
+        android:hint="Vehicle Registration NUmber"
+        android:letterSpacing="0.1"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:textColor="@color/black"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:textColorHint="@color/d_brown"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/l_name" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/password"
@@ -112,7 +132,7 @@
         android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/l_name"
+        app:layout_constraintTop_toBottomOf="@+id/email"
         app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
