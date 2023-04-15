@@ -140,6 +140,7 @@ public class user_login extends AppCompatActivity {
                         l_name.setVisibility(View.VISIBLE);
                         editTextPassword.setVisibility(View.VISIBLE);
                         textInputLayout.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
 
                         txtfname=f_name.getText().toString();
                         txtlname=l_name.getText().toString();
@@ -156,6 +157,7 @@ public class user_login extends AppCompatActivity {
                         }
                         else{
                             //if all data are given then create user account
+                            progressBar.setVisibility(View.VISIBLE);
                             mAuth.createUserWithEmailAndPassword(txtemail,txtpass)
                                     .addOnCompleteListener(user_login.this, new OnCompleteListener<AuthResult>() {
                                         @Override
