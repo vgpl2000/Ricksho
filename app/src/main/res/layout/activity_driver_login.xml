@@ -112,7 +112,7 @@
         android:inputType="textCapCharacters"
         android:background="@drawable/edittext_bg"
         android:fontFamily="@font/gotham_m"
-        android:hint="Vehicle Registration NUmber"
+        android:hint="Email"
         android:letterSpacing="0.1"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
