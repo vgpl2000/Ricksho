@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
@@ -125,34 +126,39 @@ public class driver_login extends AppCompatActivity {
                                     //Once got the password from realtime database
                                     hideLoading();
 
-                                    //compare the password with the entered password
-                                    if (spassword.equals(password)) {
-                                        //now let to sign in the driver
-                                        mAuth.signInWithEmailAndPassword(smail, spassword)
-                                                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<AuthResult> task) {
-                                                        show_toast("Driver " + smail + " signed in!");
-                                                        hideLoading();
-                                                    }
-                                                });
-
-                                    }else if(spassword!=null){
-                                        show_toast("Wrong Password!");
+                                    if(smail.isEmpty()){
+                                        email.setError("Email cannot be empty!");
                                     }
+                                    else if(!android.util.Patterns.EMAIL_ADDRESS.matcher(smail).matches()){
+                                        email.setError("Enter proper Email Id!");
+                                    }else {
+                                        //compare the password with the entered password
+                                        if (spassword.equals(password)) {
+                                            //now let to sign in the driver
+                                            mAuth.signInWithEmailAndPassword(smail, spassword)
+                                                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                                            show_toast("Driver " + smail + " signed in!");
+                                                            hideLoading();
+                                                        }
+                                                    });
 
+                                        } else if (spassword != null) {
+                                            show_toast("Wrong Password!");
+                                        }
+                                    }
 
                                 }
 
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError error) {
-                                    show_toast("Failed to acess passsword!");
+                                    show_toast("Failed to access password!");
                                 }
                             });
 
                             }else {
                                 //Driver does not exist
-                                show_toast("Driver doesn't exist!");
                                 show_names();
                                 show_email();
                                 show_Password();
@@ -198,6 +204,8 @@ public class driver_login extends AppCompatActivity {
                                                                         //FINAL for New Driver
 
                                                                         show_toast("Email Verified!");
+                                                                        Intent intent = new Intent(driver_login.this, MainActivity.class);
+                                                                        startActivity(intent);
                                                                         hideLoading();
 
                                                                     } else {
@@ -231,7 +239,7 @@ public class driver_login extends AppCompatActivity {
         });
     }
     public boolean isValidVehicleNumber(String vehicleNumber) {
-        String pattern = "^[A-Z]{2}[0-9]{1,2}[A-Z]{0,2}[0-9]{4}$";
+        String pattern = "^[A-Z]{2}[0-9]{1,2}[A-Z]{0,2}[0-9]{0,4}$";
         return vehicleNumber.matches(pattern);
     }
 

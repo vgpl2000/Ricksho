@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
@@ -100,9 +101,9 @@ public class user_login extends AppCompatActivity {
                     //signing in
                     FirebaseUser user;
                     user= mAuth.getCurrentUser();
-                    if(userExist_A(user)){
+                    if(userExist_A(user)&&user!=null){
 
-                        userExist_R(txtemail, new UserExistCallback() {
+                        userExist_R(user.getUid(), new UserExistCallback() {
                             @Override
                             public void onUserExist(boolean exist) {
                                 if (exist&&mAuth.getCurrentUser()!=null) {
@@ -142,6 +143,8 @@ public class user_login extends AppCompatActivity {
                                                                                 //FINAL for registered user
 
                                                                                 Toast.makeText(user_login.this, "User signed In", Toast.LENGTH_SHORT).show();
+                                                                                Intent intent = new Intent(user_login.this, MainActivity.class);
+                                                                                startActivity(intent);
                                                                             }
                                                                             else {
                                                                                 // Hide the loading view
@@ -246,6 +249,8 @@ public class user_login extends AppCompatActivity {
                                                                                     //Adding to realtime database
                                                                                     String uid = user.getUid();
                                                                                     addToReal_User(uid,txtemail,txtfname,txtlname,txtpass);
+                                                                                    Intent intent = new Intent(user_login.this, MainActivity.class);
+                                                                                    startActivity(intent);
                                                                                 }
 
                                                                             } else {
@@ -288,9 +293,7 @@ public class user_login extends AppCompatActivity {
     //Function to add data to realtime database
     public static boolean addToReal_User(String uid,String email,String fname,String lname, String password){
         FirebaseDatabase firebaseDatabase=FirebaseDatabase.getInstance();
-        String[] parts = email.split("@");
-        String username = parts[0];
-        DatabaseReference reference=firebaseDatabase.getReference("user").child(username);
+        DatabaseReference reference=firebaseDatabase.getReference("user").child(uid);
         reference.child("uid").setValue(uid);
         reference.child("email").setValue(email);
         reference.child("fname").setValue(fname);
@@ -303,16 +306,15 @@ public class user_login extends AppCompatActivity {
         void onUserExist(boolean exist);
     }
 
-    public static void userExist_R(String email, UserExistCallback callback) {
+    public static void userExist_R(String uid, UserExistCallback callback) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference reference = firebaseDatabase.getReference("user");
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String[] parts = email.split("@");
-                String username = parts[0];
 
-                if (snapshot.hasChild(username)) {
+
+                if (snapshot.hasChild(uid)) {
                     callback.onUserExist(true);
                 } else {
                     callback.onUserExist(false);
