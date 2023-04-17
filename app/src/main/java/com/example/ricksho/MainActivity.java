@@ -40,6 +40,11 @@ public class MainActivity extends AppCompatActivity {
 
         //Initialing Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+        //There exists a user
+        if(mAuth.getCurrentUser()!=null){
+            //It must be checked the user is driver or user in realtime database
+            Toast.makeText(this, "User already logged In!", Toast.LENGTH_SHORT).show();
+        }
 
         btn_hire=findViewById(R.id.btn_hire);
         btn_login=findViewById(R.id.reg_user);

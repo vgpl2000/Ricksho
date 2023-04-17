@@ -31,6 +31,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -73,8 +74,6 @@ public class user_login extends AppCompatActivity {
         }
 
 
-
-
         FrameLayout loadingView = findViewById(R.id.loading_view);
         LottieAnimationView loadingAnimation = findViewById(R.id.loading_animation);
 
@@ -103,7 +102,7 @@ public class user_login extends AppCompatActivity {
                     user= mAuth.getCurrentUser();
                     if(userExist_A(user)){
 
-                        userExist_R(mAuth.getCurrentUser().getUid(), new UserExistCallback() {
+                        userExist_R(txtemail, new UserExistCallback() {
                             @Override
                             public void onUserExist(boolean exist) {
                                 if (exist&&mAuth.getCurrentUser()!=null) {
@@ -140,7 +139,7 @@ public class user_login extends AppCompatActivity {
                                                                                 loadingView.setVisibility(View.GONE);
                                                                                 loadingAnimation.cancelAnimation();
 
-                                                                                //FINAL
+                                                                                //FINAL for registered user
 
                                                                                 Toast.makeText(user_login.this, "User signed In", Toast.LENGTH_SHORT).show();
                                                                             }
@@ -230,7 +229,7 @@ public class user_login extends AppCompatActivity {
                                                                                 hideLoading();
                                                                                 //mail verified then display next
 
-                                                                                //FINAL
+                                                                                //FINAL for New User
 
                                                                                 show_toast("Email Verified!");
                                                                                 hideLoading();
@@ -289,7 +288,10 @@ public class user_login extends AppCompatActivity {
     //Function to add data to realtime database
     public static boolean addToReal_User(String uid,String email,String fname,String lname, String password){
         FirebaseDatabase firebaseDatabase=FirebaseDatabase.getInstance();
-        DatabaseReference reference=firebaseDatabase.getReference("user").child(uid);
+        String[] parts = email.split("@");
+        String username = parts[0];
+        DatabaseReference reference=firebaseDatabase.getReference("user").child(username);
+        reference.child("uid").setValue(uid);
         reference.child("email").setValue(email);
         reference.child("fname").setValue(fname);
         reference.child("lname").setValue(lname);
@@ -301,13 +303,16 @@ public class user_login extends AppCompatActivity {
         void onUserExist(boolean exist);
     }
 
-    public static void userExist_R(String uid, UserExistCallback callback) {
+    public static void userExist_R(String email, UserExistCallback callback) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference reference = firebaseDatabase.getReference("user");
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.hasChild(uid)) {
+                String[] parts = email.split("@");
+                String username = parts[0];
+
+                if (snapshot.hasChild(username)) {
                     callback.onUserExist(true);
                 } else {
                     callback.onUserExist(false);
