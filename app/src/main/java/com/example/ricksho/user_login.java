@@ -145,6 +145,7 @@ public class user_login extends AppCompatActivity {
                                                                                 Toast.makeText(user_login.this, "User signed In", Toast.LENGTH_SHORT).show();
                                                                                 Intent intent = new Intent(user_login.this, MainActivity.class);
                                                                                 startActivity(intent);
+                                                                                finish();
                                                                             }
                                                                             else {
                                                                                 // Hide the loading view
@@ -251,6 +252,7 @@ public class user_login extends AppCompatActivity {
                                                                                     addToReal_User(uid,txtemail,txtfname,txtlname,txtpass);
                                                                                     Intent intent = new Intent(user_login.this, MainActivity.class);
                                                                                     startActivity(intent);
+                                                                                    finish();
                                                                                 }
 
                                                                             } else {

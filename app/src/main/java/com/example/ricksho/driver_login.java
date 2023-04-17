@@ -141,6 +141,9 @@ public class driver_login extends AppCompatActivity {
                                                         public void onComplete(@NonNull Task<AuthResult> task) {
                                                             show_toast("Driver " + smail + " signed in!");
                                                             hideLoading();
+                                                            Intent intent = new Intent(driver_login.this, MainActivity.class);
+                                                            startActivity(intent);
+                                                            finish();
                                                         }
                                                     });
 
@@ -206,6 +209,7 @@ public class driver_login extends AppCompatActivity {
                                                                         show_toast("Email Verified!");
                                                                         Intent intent = new Intent(driver_login.this, MainActivity.class);
                                                                         startActivity(intent);
+                                                                        finish();
                                                                         hideLoading();
 
                                                                     } else {
