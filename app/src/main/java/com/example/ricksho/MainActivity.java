@@ -114,6 +114,30 @@ public class MainActivity extends AppCompatActivity {
         btn_login=findViewById(R.id.reg_user);
         btn_driver=findViewById(R.id.reg_driver);
 
+        //To check already hired or not
+        if (mAuth.getCurrentUser()==null) {
+            //do nothing
+        }else {
+            String uid = mAuth.getUid();
+            mDatabaseReference.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists()){
+                        if(snapshot.child("order_status").getValue().toString().equals("ordered")){
+                            btn_hire.setEnabled(false);
+                            Toast.makeText(MainActivity.this, "Driver is on the way...", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+
+
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -139,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
                 }else{
                     showLoading();
                     String uid= mAuth.getUid();
+
+
 
                     //Display Activity of Driver List
                     Intent intent = new Intent(MainActivity.this, user_driver_list.class);
