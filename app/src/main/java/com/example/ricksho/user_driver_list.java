@@ -122,7 +122,7 @@ public class user_driver_list extends AppCompatActivity {
                         double driverLatitude = driverSnapshot.child("location").child("latitude").getValue(Double.class);
                         double driverLongitude = driverSnapshot.child("location").child("longitude").getValue(Double.class);
                         double distance = calculateDistance(mUserLatitude, mUserLongitude, driverLatitude, driverLongitude);
-                        String driverName = driverSnapshot.child("name").getValue(String.class);
+                        String driverName = driverSnapshot.child("fname").getValue(String.class);
 
                         // Create a new ListItem object and add it to the driver list
                         ListItem listItem = new ListItem(driverName, String.format("%.2f km", distance));

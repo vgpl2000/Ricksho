@@ -38,7 +38,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ListItem listItem=listItems.get(position);
         holder.d_name.setText(listItem.getName());
-        holder.d_name.setText(listItem.getDistance());
+        holder.d_distance.setText(listItem.getDistance());
 
     }
 
