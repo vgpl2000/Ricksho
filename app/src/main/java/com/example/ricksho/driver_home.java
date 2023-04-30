@@ -15,6 +15,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -86,9 +87,11 @@ public class driver_home extends AppCompatActivity {
                                         userLocation.setLongitude(longitude);
 
                                         // Save the user's location to the Realtime Database
-                                        Toast.makeText(driver_home.this, "vnum: "+vnum, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(driver_home.this, "Sending Location...", Toast.LENGTH_SHORT).show();
 
+                                        mDatabaseReference.child(vnum).child("status").setValue("Online");
                                         mDatabaseReference.child(vnum).child("location").setValue(userLocation);
+
                                     }
                                 };
                                 // Request location updates every 10 seconds
@@ -112,6 +115,15 @@ public class driver_home extends AppCompatActivity {
                             }else{
                                 //Switch is OFF
                                 switch_text.setText("Offline");
+                                mLocationManager.removeUpdates(mLocationListener);
+                                mDatabaseReference.child(vnum).child("status").setValue("Offline");
+                                DatabaseReference reference=mDatabaseReference.child(vnum).child("location");
+                                reference.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Toast.makeText(driver_home.this, "Driver Offline!", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
 
                             }
                         }

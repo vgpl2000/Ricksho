@@ -2,10 +2,16 @@ package com.example.ricksho;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +19,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.Manifest;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +40,11 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     public FrameLayout loadingView;
     public LottieAnimationView loadingAnimation;
+    DatabaseReference mDatabaseReference;
+    ValueEventListener mValueEventListener;
+    LocationManager mLocationManager;
+    LocationListener mLocationListener;
+
 
 
 
@@ -47,6 +59,12 @@ public class MainActivity extends AppCompatActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.yellow));
         }
+
+        // Get a reference to the Realtime Database
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference("user");
+
+        // Get a reference to the Location Manager
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         loadingView = findViewById(R.id.loading_view);
         loadingAnimation = findViewById(R.id.loading_animation);
@@ -117,12 +135,53 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, user_login.class);
                     startActivity(intent);
                 }else{
+                    String uid= mAuth.getUid();
 
+//Hiring processes
+//Saving the Location of the user every 10 secs
+                    mLocationListener=new LocationListener() {
+                        @Override
+                        public void onLocationChanged(@NonNull Location location) {
+                            // Get the user's latitude and longitude coordinates
+                            double latitude = location.getLatitude();
+                            double longitude = location.getLongitude();
 
-                    //Hiring processes
+                            // Create a Location object with the user's coordinates
+                            Location userLocation = new Location("");
+                            userLocation.setLatitude(latitude);
+                            userLocation.setLongitude(longitude);
 
+                            // Save the user's location to the Realtime Database
+                            Toast.makeText(MainActivity.this, "Sending Location...", Toast.LENGTH_SHORT).show();
 
+                            mDatabaseReference.child(uid).child("location").setValue(userLocation);
+                        }
 
+                        @Override
+                        public void onProviderEnabled(@NonNull String provider) {
+                            // GPS provider is enabled
+                        }
+
+                        @Override
+                        public void onProviderDisabled(@NonNull String provider) {
+                            // GPS provider is disabled
+                        }
+                    };
+
+                    // Request location updates every 10 seconds
+                    if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // Request location permission at runtime if not granted
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                        return;
+                    }
+
+                    mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, mLocationListener);
+                    } else {
+                        // GPS provider is disabled
+                        Toast.makeText(MainActivity.this, "Please enable GPS to use this feature", Toast.LENGTH_SHORT).show();
+                    }
 
                 }
             }
