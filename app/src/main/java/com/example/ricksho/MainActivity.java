@@ -137,12 +137,30 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, user_login.class);
                     startActivity(intent);
                 }else{
+                    mDatabaseReference.child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if(snapshot.exists()){
+                                if(snapshot.hasChild("order_status")){
+                                    Toast.makeText(MainActivity.this, "Already ordered!", Toast.LENGTH_SHORT).show();
+                                }
+                                else{
+                                    //Display Activity of Driver List
+                                    Intent intent = new Intent(MainActivity.this, user_driver_list.class);
+                                    startActivity(intent);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                     showLoading();
                     String uid= mAuth.getUid();
 
-                    //Display Activity of Driver List
-                    Intent intent = new Intent(MainActivity.this, user_driver_list.class);
-                    startActivity(intent);
+
                     //Hiring processes
                     //Saving the Location of the user every 10 secs
                     mLocationListener=new LocationListener() {
@@ -158,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                             userLocation.setLongitude(longitude);
 
                             // Save the user's location to the Realtime Database
-                            Toast.makeText(MainActivity.this, "Sending Location...", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(MainActivity.this, "Sending Location...", Toast.LENGTH_SHORT).show();
 
                             mDatabaseReference.child(uid).child("location").setValue(userLocation);
                             hideLoading();
