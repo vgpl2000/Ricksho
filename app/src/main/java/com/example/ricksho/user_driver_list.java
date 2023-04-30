@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,7 +28,6 @@ public class user_driver_list extends AppCompatActivity {
     DatabaseReference myRef = database.getReference();
     RecyclerView recyclerView;
     ImageButton btn_close;
-    TextView txt_gone;
     private MyAdapter mAdapter;
 
     private double mUserLatitude;
@@ -43,28 +41,7 @@ public class user_driver_list extends AppCompatActivity {
         recyclerView=findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         btn_close=findViewById(R.id.btn_cancel);
-        txt_gone=findViewById(R.id.txt_gone);
         mAdapter=new MyAdapter(mDriverList,this);
-        mAuth = FirebaseAuth.getInstance();
-       /* String uid=mAuth.getCurrentUser().getUid();
-
-        myRef.child("user").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                    String o_stat=snapshot.child(uid).child("order_status").getValue().toString();
-                    if(o_stat.equals("ordered")){
-                        recyclerView.setVisibility(View.GONE);
-                        txt_gone.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });*/
 
         btn_close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +76,37 @@ public class user_driver_list extends AppCompatActivity {
             }
         });
 
+
+
+        //After getting driver name and distance
+        /*
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // Loop through the data and add it to a list
+                List<ListItem> driverList = new ArrayList<>();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    // Get the data from the snapshot
+                    String name = ds.child("name").getValue(String.class);
+                    String distance = ds.child("distance").getValue(String.class);
+                    // Create a ListItem object and add it to the list
+                    ListItem item = new ListItem(name, distance);
+                    driverList.add(item);
+                }
+
+                // Create an instance of MyAdapter and pass it the driverList
+                MyAdapter adapter = new MyAdapter(driverList, user_driver_list.this);
+                // Set the adapter to your RecyclerView
+                recyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle error
+            }
+        });
+
+        */
 
     }
 
