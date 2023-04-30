@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, user_login.class);
                     startActivity(intent);
                 }else{
+                    showLoading();
                     String uid= mAuth.getUid();
 
                     //Display Activity of Driver List
@@ -159,9 +160,8 @@ public class MainActivity extends AppCompatActivity {
                             // Save the user's location to the Realtime Database
                             Toast.makeText(MainActivity.this, "Sending Location...", Toast.LENGTH_SHORT).show();
 
-
-
                             mDatabaseReference.child(uid).child("location").setValue(userLocation);
+                            hideLoading();
                         }
 
                         @Override
