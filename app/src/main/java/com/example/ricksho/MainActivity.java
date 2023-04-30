@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
 import android.content.Intent;
@@ -70,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         loadingAnimation = findViewById(R.id.loading_animation);
         showLoading();
 
+
         //Initialing Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         //There exists a user
@@ -107,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
         }
         hideLoading();
 
-
         btn_hire=findViewById(R.id.btn_hire);
         btn_login=findViewById(R.id.reg_user);
         btn_driver=findViewById(R.id.reg_driver);
@@ -137,8 +139,11 @@ public class MainActivity extends AppCompatActivity {
                 }else{
                     String uid= mAuth.getUid();
 
-//Hiring processes
-//Saving the Location of the user every 10 secs
+                    //Display Activity of Driver List
+                    Intent intent = new Intent(MainActivity.this, user_driver_list.class);
+                    startActivity(intent);
+                    //Hiring processes
+                    //Saving the Location of the user every 10 secs
                     mLocationListener=new LocationListener() {
                         @Override
                         public void onLocationChanged(@NonNull Location location) {
@@ -153,6 +158,8 @@ public class MainActivity extends AppCompatActivity {
 
                             // Save the user's location to the Realtime Database
                             Toast.makeText(MainActivity.this, "Sending Location...", Toast.LENGTH_SHORT).show();
+
+
 
                             mDatabaseReference.child(uid).child("location").setValue(userLocation);
                         }
