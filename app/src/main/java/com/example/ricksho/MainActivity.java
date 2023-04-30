@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         //To change color of status bar
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -114,6 +115,9 @@ public class MainActivity extends AppCompatActivity {
         btn_login=findViewById(R.id.reg_user);
         btn_driver=findViewById(R.id.reg_driver);
 
+
+/*
+
         //To check already hired or not
         if (mAuth.getCurrentUser()==null) {
             //do nothing
@@ -136,6 +140,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
+
+*/
 
 
         btn_login.setOnClickListener(new View.OnClickListener() {
@@ -164,57 +171,78 @@ public class MainActivity extends AppCompatActivity {
                     showLoading();
                     String uid= mAuth.getUid();
 
-
-
-                    //Display Activity of Driver List
-                    Intent intent = new Intent(MainActivity.this, user_driver_list.class);
-                    startActivity(intent);
-                    //Hiring processes
-                    //Saving the Location of the user every 10 secs
-                    mLocationListener=new LocationListener() {
+                    mDatabaseReference.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onLocationChanged(@NonNull Location location) {
-                            // Get the user's latitude and longitude coordinates
-                            double latitude = location.getLatitude();
-                            double longitude = location.getLongitude();
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if(snapshot.child("order_status").exists()){
+                                if(snapshot.child("order_status").getValue().toString().equals("ordered")){
+                                    Toast.makeText(MainActivity.this, "Driver is on the way...", Toast.LENGTH_SHORT).show();
+                                    hideLoading();
+                                }else {
 
-                            // Create a Location object with the user's coordinates
-                            Location userLocation = new Location("");
-                            userLocation.setLatitude(latitude);
-                            userLocation.setLongitude(longitude);
 
-                            // Save the user's location to the Realtime Database
-                            Toast.makeText(MainActivity.this, "Sending Location...", Toast.LENGTH_SHORT).show();
+                                    //Display Activity of Driver List
+                                    Intent intent = new Intent(MainActivity.this, user_driver_list.class);
+                                    startActivity(intent);
+                                    //Hiring processes
+                                    //Saving the Location of the user every 10 secs
+                                    mLocationListener=new LocationListener() {
+                                        @Override
+                                        public void onLocationChanged(@NonNull Location location) {
+                                            // Get the user's latitude and longitude coordinates
+                                            double latitude = location.getLatitude();
+                                            double longitude = location.getLongitude();
 
-                            mDatabaseReference.child(uid).child("location").setValue(userLocation);
-                            hideLoading();
+                                            // Create a Location object with the user's coordinates
+                                            Location userLocation = new Location("");
+                                            userLocation.setLatitude(latitude);
+                                            userLocation.setLongitude(longitude);
+
+                                            // Save the user's location to the Realtime Database
+                                            Toast.makeText(MainActivity.this, "Sending Location...", Toast.LENGTH_SHORT).show();
+
+                                            mDatabaseReference.child(uid).child("location").setValue(userLocation);
+                                            hideLoading();
+                                        }
+
+                                        @Override
+                                        public void onProviderEnabled(@NonNull String provider) {
+                                            // GPS provider is enabled
+                                        }
+
+                                        @Override
+                                        public void onProviderDisabled(@NonNull String provider) {
+                                            // GPS provider is disabled
+                                        }
+                                    };
+
+                                    // Request location updates every 10 seconds
+                                    if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                        // Request location permission at runtime if not granted
+                                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                                        return;
+                                    }
+
+                                    mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                                    if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                                        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, mLocationListener);
+                                    } else {
+                                        // GPS provider is disabled
+                                        Toast.makeText(MainActivity.this, "Please enable GPS to use this feature", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                }
+                            }
                         }
 
                         @Override
-                        public void onProviderEnabled(@NonNull String provider) {
-                            // GPS provider is enabled
+                        public void onCancelled(@NonNull DatabaseError error) {
+
                         }
+                    });
 
-                        @Override
-                        public void onProviderDisabled(@NonNull String provider) {
-                            // GPS provider is disabled
-                        }
-                    };
 
-                    // Request location updates every 10 seconds
-                    if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // Request location permission at runtime if not granted
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-                        return;
-                    }
 
-                    mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                    if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, mLocationListener);
-                    } else {
-                        // GPS provider is disabled
-                        Toast.makeText(MainActivity.this, "Please enable GPS to use this feature", Toast.LENGTH_SHORT).show();
-                    }
 
                 }
             }

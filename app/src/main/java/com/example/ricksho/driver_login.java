@@ -143,7 +143,7 @@ public class driver_login extends AppCompatActivity {
                                                             hideLoading();
                                                             Intent intent = new Intent(driver_login.this, MainActivity.class);
                                                             startActivity(intent);
-                                                            finish();
+
                                                         }
                                                     });
 
