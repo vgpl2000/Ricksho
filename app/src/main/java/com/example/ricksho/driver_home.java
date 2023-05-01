@@ -3,14 +3,23 @@ package com.example.ricksho;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -25,10 +34,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 public class driver_home extends AppCompatActivity {
     TextView text, switch_text;
     Switch aSwitch;
     FirebaseAuth mAuth;
+    RecyclerView recyclerView;
+    private UserAdapter mAdapter;
+    private List<UserList> mDriverList;
     DatabaseReference mDatabaseReference;
     ValueEventListener mValueEventListener;
     LocationManager mLocationManager;
@@ -39,16 +56,34 @@ public class driver_home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_home);
 
+        mDriverList = new ArrayList<>();
+
         // Get a reference to the Realtime Database
         mDatabaseReference = FirebaseDatabase.getInstance().getReference("driver");
 
         // Get a reference to the Location Manager
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+
         mAuth = FirebaseAuth.getInstance();
         text = findViewById(R.id.textView);
         switch_text = findViewById(R.id.switch_Text);
         aSwitch = findViewById(R.id.mySwitch);
+        recyclerView=findViewById(R.id.recycler1);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter=new UserAdapter(mDriverList,this);
+        mAdapter = new UserAdapter(new ArrayList<>(), driver_home.this);
+        recyclerView.setAdapter(mAdapter);
+
+
+        //To change color of status bar
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.yellow));
+        }
+
+
 
 
         String targetUID = mAuth.getCurrentUser().getUid();
@@ -60,6 +95,26 @@ public class driver_home extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot driverSnapshot : snapshot.getChildren()) {
                     String vnum = driverSnapshot.child("vnum").getValue(String.class);
+
+
+
+                    mDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                String status=snapshot.child(vnum).child("status").getValue().toString();
+                                if(status.equals("Online")){
+                                    aSwitch.setChecked(true);
+                                }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+
+
 
                     String name = driverSnapshot.child("fname").getValue(String.class);
                     text.setVisibility(View.VISIBLE);
@@ -92,7 +147,7 @@ public class driver_home extends AppCompatActivity {
                                         userLocation.setLongitude(longitude);
 
                                         // Save the user's location to the Realtime Database
-                                        Toast.makeText(driver_home.this, "Sending Location...", Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(driver_home.this, "Sending Location...", Toast.LENGTH_SHORT).show();
 
                                         mDatabaseReference.child(vnum).child("status").setValue("Online");
                                         mDatabaseReference.child(vnum).child("location").setValue(userLocation);
@@ -113,10 +168,6 @@ public class driver_home extends AppCompatActivity {
                                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, mLocationListener);
 
 
-
-
-
-
                             }else{
                                 //Switch is OFF
                                 switch_text.setText("Offline");
@@ -135,12 +186,47 @@ public class driver_home extends AppCompatActivity {
                     });
 
 
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        //For Recycler View
+        DatabaseReference myRef=FirebaseDatabase.getInstance().getReference().child("driver");
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    for(DataSnapshot dataSnapshot:snapshot.getChildren()){
+                        for(DataSnapshot dataSnapshot1:dataSnapshot.child("orders").getChildren()){
+                                String uname=dataSnapshot1.child("name").getValue().toString();
+                                Double lat= Double.valueOf(dataSnapshot1.child("location").child("latitude").getValue().toString());
+                                Double longi= Double.valueOf(dataSnapshot1.child("location").child("longitude").getValue().toString());
+                                //now get address from lat and longi
+
+                            Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                            try {
+                                List<Address> addresses = geocoder.getFromLocation(lat, longi, 1);
+                                if (addresses != null && addresses.size() > 0) {
+                                    Address address = addresses.get(0);
+                                    String addressLine = address.getAddressLine(0);
 
 
+                                    UserList listItem = new UserList(uname,addressLine);
+                                    mDriverList.add(listItem);
+                                    mAdapter.setDriverList(mDriverList);
 
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
 
-
-
+                        }
+                    }
                 }
             }
 
@@ -156,7 +242,22 @@ public class driver_home extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         // Remove the location updates and ValueEventListener when the activity is destroyed
-        mLocationManager.removeUpdates(mLocationListener);
-        mDatabaseReference.removeEventListener(mValueEventListener);
+        try{
+            mLocationManager.removeUpdates(mLocationListener);
+            mDatabaseReference.removeEventListener(mValueEventListener);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Navigate back to the home screen when the back button is pressed
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

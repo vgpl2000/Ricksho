@@ -2,16 +2,22 @@ package com.example.ricksho;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,6 +39,8 @@ public class user_driver_list extends AppCompatActivity {
     private MyAdapter mAdapter;
 
     private double mUserLatitude;
+    public FrameLayout loadingView;
+    public LottieAnimationView loadingAnimation;
     private double mUserLongitude;
     private List<ListItem> mDriverList;
 
@@ -46,25 +54,17 @@ public class user_driver_list extends AppCompatActivity {
         txt_gone=findViewById(R.id.txt_gone);
         mAdapter=new MyAdapter(mDriverList,this);
         mAuth = FirebaseAuth.getInstance();
-       /* String uid=mAuth.getCurrentUser().getUid();
+        loadingView = findViewById(R.id.loading_view);
+        loadingAnimation = findViewById(R.id.loading_animation);
 
-        myRef.child("user").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                    String o_stat=snapshot.child(uid).child("order_status").getValue().toString();
-                    if(o_stat.equals("ordered")){
-                        recyclerView.setVisibility(View.GONE);
-                        txt_gone.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+        //To change color of status bar
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.yellow));
+        }
 
-            }
-        });*/
 
         btn_close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,5 +142,15 @@ public class user_driver_list extends AppCompatActivity {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double d = R * c;
         return d;
+    }
+
+    public void showLoading() {
+        loadingView.setVisibility(View.VISIBLE);
+        loadingAnimation.playAnimation();
+    }
+
+    public void hideLoading() {
+        loadingView.setVisibility(View.GONE);
+        loadingAnimation.cancelAnimation();
     }
 }

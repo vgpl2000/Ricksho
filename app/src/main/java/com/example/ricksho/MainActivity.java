@@ -225,4 +225,12 @@ public class MainActivity extends AppCompatActivity {
         loadingAnimation.cancelAnimation();
     }
 
+    @Override
+    public void onBackPressed() {
+        // Navigate back to the home screen when the back button is pressed
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 }

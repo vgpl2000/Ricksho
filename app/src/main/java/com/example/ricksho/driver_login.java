@@ -254,6 +254,7 @@ public class driver_login extends AppCompatActivity {
         reference.child("uid").setValue(uid);
         reference.child("vnum").setValue(vnum);
         reference.child("email").setValue(email);
+        reference.child("status").setValue("Offline");
         reference.child("fname").setValue(fname);
         reference.child("lname").setValue(lname);
         reference.child("password").setValue(password);
