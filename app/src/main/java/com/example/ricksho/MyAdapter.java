@@ -2,6 +2,7 @@ package com.example.ricksho;
 
 import android.app.LauncherActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -78,11 +79,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                                             if(d_fname.equals(ex_fname)){
                                                 //found driver selected by user. now get vnum from it's child
                                                 String vnum=dsnapshot.child("vnum").getValue().toString();
-                                                holder.mRef.child(vnum).child("orders").child(fname).child("name").setValue(fname);
-                                                holder.mRef.child(vnum).child("orders").child(fname).child("location").setValue(data);
+                                                holder.mRef.child(vnum).child("orders").child(uid_user).child("name").setValue(fname);
+                                                holder.mRef.child(vnum).child("orders").child(uid_user).child("location").setValue(data);
                                                 //make already ordered so that one user cannot order again
-                                                holder.mRef2.child(uid_user).child("order_status").setValue("ordered");
+                                                holder.mRef.child(vnum).child("orders").child(uid_user).child("order_status").setValue("ordered");
+                                                String email=holder.mAuth.getCurrentUser().getEmail().toString();
+                                                holder.mRef.child(vnum).child("orders").child(uid_user).child("email").setValue(email);
                                                 Toast.makeText(view.getContext(), "Informing "+ex_fname, Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(context, MainActivity.class);
+                                                context.startActivity(intent);
                                             }
                                         }
                                     }

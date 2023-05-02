@@ -277,7 +277,32 @@ public class user_login extends AppCompatActivity {
                                                 });
                                             } else {
                                                 hideLoading();
-                                                show_toast("Failed to Register the User!");
+                                                //Sign in
+                                                mAuth.signInWithEmailAndPassword(txtemail,txtpass)
+                                                        .addOnCompleteListener(user_login.this, new OnCompleteListener<AuthResult>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                                                if(task.isSuccessful()){
+                                                                    // Hide the loading view
+                                                                    loadingView.setVisibility(View.GONE);
+                                                                    loadingAnimation.cancelAnimation();
+
+                                                                    //FINAL for registered user
+
+                                                                    Toast.makeText(user_login.this, "User signed In", Toast.LENGTH_SHORT).show();
+                                                                    Intent intent = new Intent(user_login.this, MainActivity.class);
+                                                                    startActivity(intent);
+                                                                    finish();
+                                                                }
+                                                                else {
+                                                                    // Hide the loading view
+                                                                    loadingView.setVisibility(View.GONE);
+                                                                    loadingAnimation.cancelAnimation();
+
+                                                                    Toast.makeText(user_login.this, "Authentication failed in sign in",Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            }
+                                                        });
                                             }
                                         }
                                     });

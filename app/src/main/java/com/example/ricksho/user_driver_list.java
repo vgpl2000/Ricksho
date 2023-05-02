@@ -75,7 +75,7 @@ public class user_driver_list extends AppCompatActivity {
         });
 
 
-        //Retrieving users latitude and logitude
+        //Retrieving users latitude and longitude
         mAuth=FirebaseAuth.getInstance();
         myRef.child("user").child(mAuth.getUid()).child("location").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -132,7 +132,7 @@ public class user_driver_list extends AppCompatActivity {
     }
 
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        Toast.makeText(this, "Calculating Distance", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Calculating Distance", Toast.LENGTH_SHORT).show();
         double R = 6371; // Earth radius in kilometers
         double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);

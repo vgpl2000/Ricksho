@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public FrameLayout loadingView;
     public LottieAnimationView loadingAnimation;
     DatabaseReference mDatabaseReference;
+    DatabaseReference mDatabaseReference1;
     ValueEventListener mValueEventListener;
     LocationManager mLocationManager;
     LocationListener mLocationListener;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Get a reference to the Realtime Database
         mDatabaseReference = FirebaseDatabase.getInstance().getReference("user");
+        mDatabaseReference1 = FirebaseDatabase.getInstance().getReference("driver");
 
         // Get a reference to the Location Manager
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -137,18 +139,33 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, user_login.class);
                     startActivity(intent);
                 }else{
-                    mDatabaseReference.child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    mDatabaseReference1.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if(snapshot.exists()){
-                                if(snapshot.hasChild("order_status")){
-                                    Toast.makeText(MainActivity.this, "Already ordered!", Toast.LENGTH_SHORT).show();
+
+                                for(DataSnapshot snapshot1:snapshot.getChildren()){
+                                    if(snapshot1.hasChild("orders")&&snapshot1.child("orders").hasChild(mAuth.getCurrentUser().getUid())){
+                                        //User ordered from this auto driver
+                                        if(snapshot1.child("orders").child(mAuth.getCurrentUser().getUid()).child("order_status").getValue().toString().equals("ordered")){
+                                            Toast.makeText(MainActivity.this, "Already ordered!", Toast.LENGTH_SHORT).show();
+                                        } else if(snapshot1.child("orders").child(mAuth.getCurrentUser().getUid()).child("order_status").getValue().toString().equals("accepted")){
+                                            Toast.makeText(MainActivity.this, "Driver is on the way....", Toast.LENGTH_SHORT).show();
+                                        }
+                                        else{
+                                            //Display Activity of Driver List
+                                            Intent intent = new Intent(MainActivity.this, user_driver_list.class);
+                                            startActivity(intent);
+                                        }
+
+                                    }
+                                    else{
+                                        //Display Activity of Driver List
+                                        Intent intent = new Intent(MainActivity.this, user_driver_list.class);
+                                        startActivity(intent);
+                                    }
                                 }
-                                else{
-                                    //Display Activity of Driver List
-                                    Intent intent = new Intent(MainActivity.this, user_driver_list.class);
-                                    startActivity(intent);
-                                }
+
                             }
                         }
 
