@@ -12,4 +12,6 @@
     <color name="yellow">#fbc436</color>
     <color name="t_black">#C6F7F7F7</color>
     <color name="d_brown">#FF52340A</color>
+    <color name="green">#25FA00</color>
+    <color name="red">#FF1D17</color>
 </resources>
