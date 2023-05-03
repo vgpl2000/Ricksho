@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class driver_home extends AppCompatActivity {
-    TextView text, switch_text;
+    TextView text, switch_text,btn_long;
     Switch aSwitch;
     FirebaseAuth mAuth;
     RecyclerView recyclerView;
@@ -72,6 +72,7 @@ public class driver_home extends AppCompatActivity {
         recyclerView=findViewById(R.id.recycler1);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter=new UserAdapter(mDriverList,this);
+        btn_long=findViewById(R.id.btnlong);
         mAdapter = new UserAdapter(new ArrayList<>(), driver_home.this);
         recyclerView.setAdapter(mAdapter);
 
@@ -192,6 +193,15 @@ public class driver_home extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+
+        btn_long.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Intent intent = new Intent(driver_home.this, driver_home.class);
+                startActivity(intent);
+                return false;
             }
         });
 

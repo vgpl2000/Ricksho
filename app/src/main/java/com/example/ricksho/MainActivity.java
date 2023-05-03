@@ -10,7 +10,10 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -96,10 +99,30 @@ public class MainActivity extends AppCompatActivity {
                         btn_login.setVisibility(View.GONE);
 
                     }else{
-                        hideLoading();
-                        //Signed in user is Driver
-                        Intent intent = new Intent(MainActivity.this, driver_home.class);
-                        startActivity(intent);
+
+                        DatabaseReference ref2=firebaseDatabase.getReference("driver");
+                        ref2.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for(DataSnapshot snapshot1:snapshot.getChildren()){
+                                    if(snapshot1.child("uid").getValue().toString().equals(mAuth.getCurrentUser().getUid())){
+                                        hideLoading();
+                                        //Signed in user is Driver
+                                        Intent intent = new Intent(MainActivity.this, driver_home.class);
+                                        startActivity(intent);
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+
+
+
 
                     }
                 }
@@ -134,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
         btn_hire.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                addClickEffect(btn_hire);
                 //Verify that email verified or not
                 if (mAuth.getCurrentUser()==null) {
                     Intent intent = new Intent(MainActivity.this, user_login.class);
@@ -240,6 +264,20 @@ public class MainActivity extends AppCompatActivity {
     public void hideLoading() {
         loadingView.setVisibility(View.GONE);
         loadingAnimation.cancelAnimation();
+    }
+
+    void addClickEffect(View view)
+    {
+        Drawable drawableNormal = view.getBackground();
+
+        Drawable drawablePressed = view.getBackground().getConstantState().newDrawable();
+        drawablePressed.mutate();
+        drawablePressed.setColorFilter(Color.argb(50, 0, 0, 0), PorterDuff.Mode.SRC_ATOP);
+
+        StateListDrawable listDrawable = new StateListDrawable();
+        listDrawable.addState(new int[] {android.R.attr.state_pressed}, drawablePressed);
+        listDrawable.addState(new int[] {}, drawableNormal);
+        view.setBackground(listDrawable);
     }
 
     @Override
