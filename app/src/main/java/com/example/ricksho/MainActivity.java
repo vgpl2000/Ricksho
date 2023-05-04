@@ -157,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
         btn_hire.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addClickEffect(btn_hire);
                 //Verify that email verified or not
                 if (mAuth.getCurrentUser()==null) {
                     Intent intent = new Intent(MainActivity.this, user_login.class);
@@ -178,6 +177,9 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                         else{
                                             //Display Activity of Driver List
+                                            if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                                                return;
+                                            }
                                             Intent intent = new Intent(MainActivity.this, user_driver_list.class);
                                             startActivity(intent);
                                         }
@@ -185,6 +187,9 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     else{
                                         //Display Activity of Driver List
+                                        if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                                            return;
+                                        }
                                         Intent intent = new Intent(MainActivity.this, user_driver_list.class);
                                         startActivity(intent);
                                     }
@@ -266,19 +271,6 @@ public class MainActivity extends AppCompatActivity {
         loadingAnimation.cancelAnimation();
     }
 
-    void addClickEffect(View view)
-    {
-        Drawable drawableNormal = view.getBackground();
-
-        Drawable drawablePressed = view.getBackground().getConstantState().newDrawable();
-        drawablePressed.mutate();
-        drawablePressed.setColorFilter(Color.argb(50, 0, 0, 0), PorterDuff.Mode.SRC_ATOP);
-
-        StateListDrawable listDrawable = new StateListDrawable();
-        listDrawable.addState(new int[] {android.R.attr.state_pressed}, drawablePressed);
-        listDrawable.addState(new int[] {}, drawableNormal);
-        view.setBackground(listDrawable);
-    }
 
     @Override
     public void onBackPressed() {

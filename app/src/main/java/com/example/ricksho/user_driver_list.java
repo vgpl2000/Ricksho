@@ -111,14 +111,17 @@ public class user_driver_list extends AppCompatActivity {
 
                     // Loop through the drivers and calculate the distance between the user and each driver
                     for (DataSnapshot driverSnapshot : snapshot.getChildren()) {
-                        double driverLatitude = driverSnapshot.child("location").child("latitude").getValue(Double.class);
-                        double driverLongitude = driverSnapshot.child("location").child("longitude").getValue(Double.class);
-                        double distance = calculateDistance(mUserLatitude, mUserLongitude, driverLatitude, driverLongitude);
-                        String driverName = driverSnapshot.child("fname").getValue(String.class);
+                        if(driverSnapshot.child("location").exists()){
+                            double driverLatitude = driverSnapshot.child("location").child("latitude").getValue(Double.class);
+                            double driverLongitude = driverSnapshot.child("location").child("longitude").getValue(Double.class);
+                            double distance = calculateDistance(mUserLatitude, mUserLongitude, driverLatitude, driverLongitude);
+                            String driverName = driverSnapshot.child("fname").getValue(String.class);
 
-                        // Create a new ListItem object and add it to the driver list
-                        ListItem listItem = new ListItem(driverName, String.format("%.2f km", distance));
-                        mDriverList.add(listItem);
+                            // Create a new ListItem object and add it to the driver list
+                            ListItem listItem = new ListItem(driverName, String.format("%.2f km", distance));
+                            mDriverList.add(listItem);
+                        }
+
                     }
                     mAdapter.setDriverList(mDriverList);
                 }

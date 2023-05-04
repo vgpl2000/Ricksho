@@ -21,10 +21,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -48,6 +50,8 @@ public class driver_home extends AppCompatActivity {
     private List<UserList> mDriverList;
     DatabaseReference mDatabaseReference;
     ValueEventListener mValueEventListener;
+    public FrameLayout loadingView;
+    public LottieAnimationView loadingAnimation;
     LocationManager mLocationManager;
     LocationListener mLocationListener;
 
@@ -75,6 +79,9 @@ public class driver_home extends AppCompatActivity {
         btn_long=findViewById(R.id.btnlong);
         mAdapter = new UserAdapter(new ArrayList<>(), driver_home.this);
         recyclerView.setAdapter(mAdapter);
+        loadingView = findViewById(R.id.loading_view);
+        loadingAnimation = findViewById(R.id.loading_animation);
+        showLoading();
 
 
         //To change color of status bar
@@ -116,7 +123,7 @@ public class driver_home extends AppCompatActivity {
 
 
 
-
+                    hideLoading();
                     String name = driverSnapshot.child("fname").getValue(String.class);
                     text.setVisibility(View.VISIBLE);
                     text.setText("Hi " + name + "!");
@@ -157,13 +164,6 @@ public class driver_home extends AppCompatActivity {
                                 };
                                 // Request location updates every 10 seconds
                                 if (ActivityCompat.checkSelfPermission(driver_home.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(driver_home.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                    // TODO: Consider calling
-                                    //    ActivityCompat#requestPermissions
-                                    // here to request the missing permissions, and then overriding
-                                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                    //                                          int[] grantResults)
-                                    // to handle the case where the user grants the permission. See the documentation
-                                    // for ActivityCompat#requestPermissions for more details.
                                     return;
                                 }
                                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, mLocationListener);
@@ -199,8 +199,10 @@ public class driver_home extends AppCompatActivity {
         btn_long.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
+                showLoading();
                 Intent intent = new Intent(driver_home.this, driver_home.class);
                 startActivity(intent);
+                hideLoading();
                 return false;
             }
         });
@@ -212,30 +214,40 @@ public class driver_home extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
                     for(DataSnapshot dataSnapshot:snapshot.getChildren()){
-                        for(DataSnapshot dataSnapshot1:dataSnapshot.child("orders").getChildren()){
+                        //inside vnum now
+                        String uid1=dataSnapshot.child("uid").getValue().toString();
+                        if(uid1.equals(mAuth.getCurrentUser().getUid())){
+                            //driver verified
+                            //get vnum to enter through vnum
+                            String vnum=dataSnapshot.child("vnum").getValue().toString();
+
+                            for(DataSnapshot dataSnapshot1:snapshot.child(vnum).child("orders").getChildren()){
                                 String uname=dataSnapshot1.child("name").getValue().toString();
                                 Double lat= Double.valueOf(dataSnapshot1.child("location").child("latitude").getValue().toString());
                                 Double longi= Double.valueOf(dataSnapshot1.child("location").child("longitude").getValue().toString());
                                 //now get address from lat and longi
 
-                            Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-                            try {
-                                List<Address> addresses = geocoder.getFromLocation(lat, longi, 1);
-                                if (addresses != null && addresses.size() > 0) {
-                                    Address address = addresses.get(0);
-                                    String addressLine = address.getAddressLine(0);
+                                Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                                try {
+                                    List<Address> addresses = geocoder.getFromLocation(lat, longi, 1);
+                                    if (addresses != null && addresses.size() > 0) {
+                                        Address address = addresses.get(0);
+                                        String addressLine = address.getAddressLine(0);
 
 
-                                    UserList listItem = new UserList(uname,addressLine);
-                                    mDriverList.add(listItem);
-                                    mAdapter.setDriverList(mDriverList);
+                                        UserList listItem = new UserList(uname,addressLine);
+                                        mDriverList.add(listItem);
+                                        mAdapter.setDriverList(mDriverList);
 
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (IOException e) {
-                                e.printStackTrace();
+
                             }
 
                         }
+
                     }
                 }
             }
@@ -246,6 +258,16 @@ public class driver_home extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void showLoading() {
+        loadingView.setVisibility(View.VISIBLE);
+        loadingAnimation.playAnimation();
+    }
+
+    public void hideLoading() {
+        loadingView.setVisibility(View.GONE);
+        loadingAnimation.cancelAnimation();
     }
 
     @Override
