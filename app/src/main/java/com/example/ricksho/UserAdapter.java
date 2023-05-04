@@ -288,7 +288,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("Ricksho");
-                builder.setMessage("Are you sure you want to CANCEL this order?");
+                builder.setMessage("Are you sure you want to COMPLETE this order?");
 
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override

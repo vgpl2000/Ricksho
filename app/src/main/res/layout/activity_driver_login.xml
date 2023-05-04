@@ -108,7 +108,7 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:inputType="textCapCharacters"
+        android:inputType="textEmailAddress"
         android:background="@drawable/edittext_bg"
         android:fontFamily="@font/gotham_m"
         android:hint="Email"

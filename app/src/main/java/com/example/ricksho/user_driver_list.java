@@ -36,6 +36,7 @@ public class user_driver_list extends AppCompatActivity {
     RecyclerView recyclerView;
     ImageButton btn_close;
     TextView txt_gone;
+    TextView hid_text;
     private MyAdapter mAdapter;
 
     private double mUserLatitude;
@@ -54,6 +55,7 @@ public class user_driver_list extends AppCompatActivity {
         txt_gone=findViewById(R.id.txt_gone);
         mAdapter=new MyAdapter(mDriverList,this);
         mAuth = FirebaseAuth.getInstance();
+        hid_text=findViewById(R.id.hid_text);
         loadingView = findViewById(R.id.loading_view);
         loadingAnimation = findViewById(R.id.loading_animation);
 
@@ -71,6 +73,34 @@ public class user_driver_list extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(user_driver_list.this, MainActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        //To hide recyclerview
+        myRef.child("driver").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot snapshot1:snapshot.getChildren()){
+                    if(snapshot1.hasChild("orders")){
+                        if(snapshot1.child("orders").hasChild(mAuth.getCurrentUser().getUid())){
+                            //current user must have ordered from this auto driver
+                            String vnum1=snapshot1.child("vnum").getValue().toString();
+                            if(snapshot.child(vnum1).child("orders").child(mAuth.getCurrentUser().getUid()).child("order_status").getValue().toString().equals("accepted")||snapshot.child(vnum1).child("orders").child(mAuth.getCurrentUser().getUid()).child("order_status").getValue().toString().equals("ordered")){
+                                //if order has been accepted or ordered
+                                recyclerView.setVisibility(View.GONE);
+                                hid_text.setText("Cannot order until the completion of one Order!");
+                                hid_text.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
 

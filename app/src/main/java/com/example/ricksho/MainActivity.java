@@ -170,28 +170,25 @@ public class MainActivity extends AppCompatActivity {
                                 for(DataSnapshot snapshot1:snapshot.getChildren()){
                                     if(snapshot1.hasChild("orders")&&snapshot1.child("orders").hasChild(mAuth.getCurrentUser().getUid())){
                                         //User ordered from this auto driver
-                                        if(snapshot1.child("orders").child(mAuth.getCurrentUser().getUid()).child("order_status").getValue().toString().equals("ordered")){
-                                            Toast.makeText(MainActivity.this, "Already ordered!", Toast.LENGTH_SHORT).show();
-                                        } else if(snapshot1.child("orders").child(mAuth.getCurrentUser().getUid()).child("order_status").getValue().toString().equals("accepted")){
-                                            Toast.makeText(MainActivity.this, "Driver is on the way....", Toast.LENGTH_SHORT).show();
-                                        }
-                                        else{
-                                            //Display Activity of Driver List
-                                            if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-                                                return;
+                                        String vnum=snapshot1.child("vnum").getValue().toString();
+                                        if(snapshot.child(vnum).child("orders").hasChild(mAuth.getCurrentUser().getUid())){
+                                            if(snapshot.child(vnum).child("orders").child(mAuth.getCurrentUser().getUid()).child("order_status").getValue().toString().equals("ordered")){
+                                                Toast.makeText(MainActivity.this, "Already ordered!", Toast.LENGTH_SHORT).show();
                                             }
-                                            Intent intent = new Intent(MainActivity.this, user_driver_list.class);
-                                            startActivity(intent);
+                                            else if(snapshot.child(vnum).child("orders").child(mAuth.getCurrentUser().getUid()).child("order_status").getValue().toString().equals("accepted")){
+                                                Toast.makeText(MainActivity.this, "Driver is on the way....", Toast.LENGTH_SHORT).show();
+                                            }
                                         }
 
                                     }
                                     else{
                                         //Display Activity of Driver List
                                         if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-                                            return;
+
                                         }
                                         Intent intent = new Intent(MainActivity.this, user_driver_list.class);
                                         startActivity(intent);
+                                        hideLoading();
                                     }
                                 }
 
