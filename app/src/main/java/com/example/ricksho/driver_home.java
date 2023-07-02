@@ -91,7 +91,9 @@ public class driver_home extends AppCompatActivity {
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.yellow));
         }
 
-
+        if(!aSwitch.isChecked()){
+            recyclerView.setVisibility(View.INVISIBLE);
+        }
 
 
         String targetUID = mAuth.getCurrentUser().getUid();
@@ -134,6 +136,7 @@ public class driver_home extends AppCompatActivity {
                         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                             if (b) {
                                 //Switch is ON
+                                recyclerView.setVisibility(View.VISIBLE);
                                 switch_text.setText("Online");
 
                                 if (ActivityCompat.checkSelfPermission(driver_home.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(driver_home.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -172,8 +175,11 @@ public class driver_home extends AppCompatActivity {
                             }else{
                                 //Switch is OFF
                                 switch_text.setText("Offline");
+                                recyclerView.setVisibility(View.INVISIBLE);
                                 mLocationManager.removeUpdates(mLocationListener);
                                 mDatabaseReference.child(vnum).child("status").setValue("Offline");
+
+
                                 DatabaseReference reference=mDatabaseReference.child(vnum).child("location");
                                 reference.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
@@ -235,7 +241,7 @@ public class driver_home extends AppCompatActivity {
                                         String addressLine = address.getAddressLine(0);
 
 
-                                        UserList listItem = new UserList(uname,addressLine);
+                                        UserList listItem = new UserList(uname,addressLine,lat,longi);
                                         mDriverList.add(listItem);
                                         mAdapter.setDriverList(mDriverList);
 

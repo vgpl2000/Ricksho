@@ -8,9 +8,11 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -363,6 +365,76 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             }
         });
 
+        //To set direction in google map installed in the phone
+        holder.btn_set.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(holder.mRef.child(vnum).child("status").equals("Offline")){
+                    Toast.makeText(context, "You must be online to Set Direction...", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    //Get the latitude and longitude of source and destination from database
+
+                    holder.mRef.child(vnum).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                            // Get the source and destination latitude and longitude
+                            double sourceLatitude;
+                            double sourceLongitude;
+
+                            double destinationLatitude;
+                            double destinationLongitude;
+
+                            sourceLatitude= (double) snapshot.child("location").child("latitude").getValue();
+                            sourceLongitude= (double) snapshot.child("location").child("longitude").getValue();
+
+                            //Destination i.e users location
+                            destinationLatitude= listItem.getU_latitude();
+                            destinationLongitude= listItem.getU_longitude();
+
+                            //Pass them to code which opens google map
+                            // Create a Uri object for the Google Maps intent
+                            Uri gmmIntentUri = Uri.parse("https://www.google.com/maps/dir/?api=1&origin=" + sourceLatitude + "," + sourceLongitude + "&destination=" + destinationLatitude + "," + destinationLongitude);
+
+                            // Create an intent with the Uri
+                            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+
+                            // Set the package to ensure only the Google Maps app responds to the intent
+                            mapIntent.setPackage("com.google.android.apps.maps");
+
+                            // Check if there's a suitable app available to handle the intent
+                            if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
+                                // Start the intent to open Google Maps
+                                context.startActivity(mapIntent);
+                            } else {
+                                // Handle the case where Google Maps app is not installed
+                                Toast.makeText(context.getApplicationContext(), "Google Maps app is not installed", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+            }
+        });
+
 
     }
 
@@ -384,6 +456,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         public ImageButton btn_cancel;
         public ImageButton btn_deli;
         public UserAdapter mAdapter;
+        public Button btn_set;
         FirebaseAuth mAuth;
         DatabaseReference mRef=FirebaseDatabase.getInstance().getReference("driver");
         DatabaseReference mRef2=FirebaseDatabase.getInstance().getReference("user");
@@ -395,6 +468,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             btn_accept=itemView.findViewById(R.id.btn_accept);
             btn_cancel=itemView.findViewById(R.id.btn_cancel);
             btn_deli=itemView.findViewById(R.id.btn_deli);
+            btn_set=itemView.findViewById(R.id.btnset);
             mAuth=FirebaseAuth.getInstance();
         }
     }
