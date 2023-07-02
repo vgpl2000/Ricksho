@@ -130,7 +130,6 @@ public class driver_home extends AppCompatActivity {
                     text.setVisibility(View.VISIBLE);
                     text.setText("Hi " + name + "!");
 
-
                     aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
