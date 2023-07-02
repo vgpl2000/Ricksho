@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -404,7 +405,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                             mapIntent.setPackage("com.google.android.apps.maps");
 
                             // Check if there's a suitable app available to handle the intent
-                            if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
+                            PackageManager packageManager= context.getPackageManager();
+                            if (mapIntent.resolveActivity(packageManager) != null) {
                                 // Start the intent to open Google Maps
                                 context.startActivity(mapIntent);
                             } else {
