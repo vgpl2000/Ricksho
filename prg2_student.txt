@@ -1,0 +1,240 @@
+//Student database
+
+mysql> create database VP22MC031_student;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use VP22MC031_student;
+Database changed
+
+
+create table Student(
+	USN char(10) primary key,
+	S_Name varchar(20) not null,
+	dob date not null,
+	branch varchar(20),
+	m1 int(3) not null,
+	m2 int(3) not null,
+	m3 int(3) not null);
+	
+Query OK, 0 rows affected, 3 warnings (0.02 sec)
+
+mysql> desc Student;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| USN    | char(10)    | NO   | PRI | NULL    |       |
+| S_Name | varchar(20) | NO   |     | NULL    |       |
+| dob    | date        | NO   |     | NULL    |       |
+| branch | varchar(20) | YES  |     | NULL    |       |
+| m1     | int         | NO   |     | NULL    |       |
+| m2     | int         | NO   |     | NULL    |       |
+| m3     | int         | NO   |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+
+
+
+insert into Student values('4VP22MC001','Akash','2001-05-01','MCA',95,89,90);
+
+insert into Student values('4VP22MC002','Ganesh','2000-02-15','MCA',90,89,90);
+
+insert into Student values('4VP21MB001','Anvith','1999-02-10','MBA',65,70,85);
+
+insert into Student values('4VP22MB002','Ankith','2001-02-04','MBA',80,70,85);
+
+insert into Student values('4VP22MC003','Aniketh','2000-06-20','MCA',75,70,87);
+
+insert into Student values('4VP22MC004','Sunil','2000-11-12','MCA',99,99,94);
+
++------------+---------+------------+--------+----+----+----+-------+------+
+| USN        | S_Name  | dob        | branch | m1 | m2 | m3 | Total | GPA  |
++------------+---------+------------+--------+----+----+----+-------+------+
+| 4VP21MB001 | Anvith  | 1999-02-10 | MBA    | 65 | 70 | 85 |   220 | NULL |
+| 4VP22MB002 | Ankith  | 2001-02-04 | MBA    | 80 | 70 | 85 |   235 | NULL |
+| 4VP22MC001 | Akash   | 2001-05-01 | MCA    | 95 | 89 | 90 |   274 | NULL |
+| 4VP22MC002 | Ganesh  | 2000-02-15 | MCA    | 90 | 89 | 90 |   269 | NULL |
+| 4VP22MC003 | Aniketh | 2000-06-20 | MCA    | 75 | 70 | 87 |   232 | NULL |
+| 4VP22MC004 | Sunil   | 2000-11-12 | MCA    | 99 | 99 | 94 |   292 | NULL |
+| 4VP22MC005 | Shekhar | 2000-11-12 | MCA    | 99 | 99 | 90 |  NULL | NULL |
++------------+---------+------------+--------+----+----+----+-------+------+
+7 rows in set (0.00 sec)
+
+
+
+alter table Student add(Total int(3),GPA float(4));
+
+mysql> desc Student;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| USN    | char(10)    | NO   | PRI | NULL    |       |
+| S_Name | varchar(20) | NO   |     | NULL    |       |
+| dob    | date        | NO   |     | NULL    |       |
+| branch | varchar(20) | YES  |     | NULL    |       |
+| m1     | int         | NO   |     | NULL    |       |
+| m2     | int         | NO   |     | NULL    |       |
+| m3     | int         | NO   |     | NULL    |       |
+| Total  | int         | YES  |     | NULL    |       |
+| GPA    | float       | YES  |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+9 rows in set (0.00 sec)
+
+
+mysql> update Student set total=(m1+m2+m3);
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 7  Changed: 1  Warnings: 0
+
+
+
+mysql> select * from Student;
++------------+---------+------------+--------+----+----+----+-------+------+
+| USN        | S_Name  | dob        | branch | m1 | m2 | m3 | Total | GPA  |
++------------+---------+------------+--------+----+----+----+-------+------+
+| 4VP21MB001 | Anvith  | 1999-02-10 | MBA    | 65 | 70 | 85 |   220 | NULL |
+| 4VP22MB002 | Ankith  | 2001-02-04 | MBA    | 80 | 70 | 85 |   235 | NULL |
+| 4VP22MC001 | Akash   | 2001-05-01 | MCA    | 95 | 89 | 90 |   274 | NULL |
+| 4VP22MC002 | Ganesh  | 2000-02-15 | MCA    | 90 | 89 | 90 |   269 | NULL |
+| 4VP22MC003 | Aniketh | 2000-06-20 | MCA    | 75 | 70 | 87 |   232 | NULL |
+| 4VP22MC004 | Sunil   | 2000-11-12 | MCA    | 99 | 99 | 94 |   292 | NULL |
+| 4VP22MC005 | Shekhar | 2000-11-12 | MCA    | 99 | 99 | 90 |   288 | NULL |
++------------+---------+------------+--------+----+----+----+-------+------+
+7 rows in set (0.00 sec)
+
+
++------------+---------+------------+--------+----+----+----+-------+------+
+| USN        | S_Name  | dob        | branch | m1 | m2 | m3 | Total | GPA  |
++------------+---------+------------+--------+----+----+----+-------+------+
+| 4VP21MB001 | Anvith  | 1999-02-10 | MBA    | 41 | 70 | 85 |   196 | NULL |
+| 4VP22MB002 | Ankith  | 2001-02-04 | MBA    | 41 | 70 | 85 |   196 | NULL |
+| 4VP22MC001 | Akash   | 2001-05-01 | MCA    | 95 | 89 | 90 |   274 | NULL |
+| 4VP22MC002 | Ganesh  | 2000-02-15 | MCA    | 90 | 89 | 90 |   269 | NULL |
+| 4VP22MC003 | Aniketh | 2000-06-20 | MCA    | 75 | 70 | 87 |   232 | NULL |
+| 4VP22MC004 | Sunil   | 2000-11-12 | MCA    | 99 | 99 | 94 |   292 | NULL |
+| 4VP22MC005 | Shekhar | 2000-11-12 | MCA    | 64 | 55 | 20 |   139 | NULL |
++------------+---------+------------+--------+----+----+----+-------+------+
+7 rows in set (0.00 sec)
+
+
+mysql> update Student set GPA=(Total/30.0);
+Query OK, 7 rows affected (0.00 sec)
+
+mysql> select * from Student;
++------------+---------+------------+--------+----+----+----+-------+---------+
+| USN        | S_Name  | dob        | branch | m1 | m2 | m3 | Total | GPA     |
++------------+---------+------------+--------+----+----+----+-------+---------+
+| 4VP21MB001 | Anvith  | 1999-02-10 | MBA    | 41 | 70 | 85 |   196 | 6.53333 |
+| 4VP22MB002 | Ankith  | 2001-02-04 | MBA    | 41 | 70 | 85 |   196 | 6.53333 |
+| 4VP22MC001 | Akash   | 2001-05-01 | MCA    | 95 | 89 | 90 |   274 | 9.13333 |
+| 4VP22MC002 | Ganesh  | 2000-02-15 | MCA    | 90 | 89 | 90 |   269 | 8.96667 |
+| 4VP22MC003 | Aniketh | 2000-06-20 | MCA    | 75 | 70 | 87 |   232 | 7.73333 |
+| 4VP22MC004 | Sunil   | 2000-11-12 | MCA    | 99 | 99 | 94 |   292 | 9.73333 |
+| 4VP22MC005 | Shekhar | 2000-11-12 | MCA    | 64 | 55 | 20 |   139 | 4.63333 |
++------------+---------+------------+--------+----+----+----+-------+---------+
+7 rows in set (0.01 sec)
+
+
+mysql> alter table Student modify GPA numeric(4,2);
+Query OK, 7 rows affected, 7 warnings (0.04 sec)
+Records: 7  Duplicates: 0  Warnings: 7
+
+mysql> desc Student;
++--------+--------------+------+-----+---------+-------+
+| Field  | Type         | Null | Key | Default | Extra |
++--------+--------------+------+-----+---------+-------+
+| USN    | char(10)     | NO   | PRI | NULL    |       |
+| S_Name | varchar(20)  | NO   |     | NULL    |       |
+| dob    | date         | NO   |     | NULL    |       |
+| branch | varchar(20)  | YES  |     | NULL    |       |
+| m1     | int          | NO   |     | NULL    |       |
+| m2     | int          | NO   |     | NULL    |       |
+| m3     | int          | NO   |     | NULL    |       |
+| Total  | int          | YES  |     | NULL    |       |
+| GPA    | decimal(4,2) | YES  |     | NULL    |       |
++--------+--------------+------+-----+---------+-------+
+9 rows in set (0.00 sec)
+
+mysql> select * from Student;
++------------+---------+------------+--------+----+----+----+-------+------+
+| USN        | S_Name  | dob        | branch | m1 | m2 | m3 | Total | GPA  |
++------------+---------+------------+--------+----+----+----+-------+------+
+| 4VP21MB001 | Anvith  | 1999-02-10 | MBA    | 41 | 70 | 85 |   196 | 6.53 |
+| 4VP22MB002 | Ankith  | 2001-02-04 | MBA    | 41 | 70 | 85 |   196 | 6.53 |
+| 4VP22MC001 | Akash   | 2001-05-01 | MCA    | 95 | 89 | 90 |   274 | 9.13 |
+| 4VP22MC002 | Ganesh  | 2000-02-15 | MCA    | 90 | 89 | 90 |   269 | 8.97 |
+| 4VP22MC003 | Aniketh | 2000-06-20 | MCA    | 75 | 70 | 87 |   232 | 7.73 |
+| 4VP22MC004 | Sunil   | 2000-11-12 | MCA    | 99 | 99 | 94 |   292 | 9.73 |
+| 4VP22MC005 | Shekhar | 2000-11-12 | MCA    | 64 | 55 | 20 |   139 | 4.63 |
++------------+---------+------------+--------+----+----+----+-------+------+
+7 rows in set (0.00 sec)
+
+
+mysql> select USN,S_Name,dob from Student where year(dob)=2000;
++------------+---------+------------+
+| USN        | S_Name  | dob        |
++------------+---------+------------+
+| 4VP22MC002 | Ganesh  | 2000-02-15 |
+| 4VP22MC003 | Aniketh | 2000-06-20 |
+| 4VP22MC004 | Sunil   | 2000-11-12 |
+| 4VP22MC005 | Shekhar | 2000-11-12 |
++------------+---------+------------+
+4 rows in set (0.00 sec)
+
+
+mysql> select USN,S_Name,dob from Student where branch='MBA';
++------------+--------+------------+
+| USN        | S_Name | dob        |
++------------+--------+------------+
+| 4VP21MB001 | Anvith | 1999-02-10 |
+| 4VP22MB002 | Ankith | 2001-02-04 |
++------------+--------+------------+
+2 rows in set (0.00 sec)
+
+
+mysql> select branch,max(GPA) from Student group by branch;
++--------+----------+
+| branch | max(GPA) |
++--------+----------+
+| MBA    |     6.53 |
+| MCA    |     9.73 |
++--------+----------+
+2 rows in set (0.01 sec)
+
+
+
+
+mysql> select USN,S_Name from Student where S_Name like 'S%';
++------------+---------+
+| USN        | S_Name  |
++------------+---------+
+| 4VP22MC004 | Sunil   |
+| 4VP22MC005 | Shekhar |
++------------+---------+
+2 rows in set (0.00 sec)
+
+
+mysql> select USN,S_Name from Student where S_Name like '%ar';
++------------+---------+
+| USN        | S_Name  |
++------------+---------+
+| 4VP22MC005 | Shekhar |
++------------+---------+
+1 row in set (0.00 sec)
+
+
+mysql> delete from Student where USN like '%001';
+Query OK, 2 rows affected (0.00 sec)
+
+mysql> select * from Student;
++------------+---------+------------+--------+----+----+----+-------+------+
+| USN        | S_Name  | dob        | branch | m1 | m2 | m3 | Total | GPA  |
++------------+---------+------------+--------+----+----+----+-------+------+
+| 4VP22MB002 | Ankith  | 2001-02-04 | MBA    | 41 | 70 | 85 |   196 | 6.53 |
+| 4VP22MC002 | Ganesh  | 2000-02-15 | MCA    | 90 | 89 | 90 |   269 | 8.97 |
+| 4VP22MC003 | Aniketh | 2000-06-20 | MCA    | 75 | 70 | 87 |   232 | 7.73 |
+| 4VP22MC004 | Sunil   | 2000-11-12 | MCA    | 99 | 99 | 94 |   292 | 9.73 |
+| 4VP22MC005 | Shekhar | 2000-11-12 | MCA    | 64 | 55 | 20 |   139 | 4.63 |
++------------+---------+------------+--------+----+----+----+-------+------+
+5 rows in set (0.00 sec)
+
+
+

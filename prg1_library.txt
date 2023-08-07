@@ -1,0 +1,585 @@
+mysql> create database VP22MC031_library;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use VP22MC031_library;
+Database changed
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| VP22MC031_example  |
+| VP22MC031_library  |
+| information_schema |
+| performance_schema |
++--------------------+
+4 rows in set (0.00 sec)
+
+mysql> create table Branch(B_id varchar(10) primary key,B_name varchar(25),HOD varchar(25));
+Query OK, 0 rows affected (0.02 sec)
+
+ysql> desc Branch
+    -> ;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| B_id   | varchar(10) | NO   | PRI | NULL    |       |
+| B_name | varchar(25) | YES  |     | NULL    |       |
+| HOD    | varchar(25) | YES  |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+mysql> create table Student(USN char(10) primary key,S_Name varchar(25) not null,Address varchar(25) not null,B_id varchar(10) references Branch(B_id),Sem int(1));
+Query OK, 0 rows affected, 1 warning (0.03 sec)
+
+mysql> desc Student;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| USN     | char(10)    | NO   | PRI | NULL    |       |
+| S_Name  | varchar(25) | NO   |     | NULL    |       |
+| Address | varchar(25) | NO   |     | NULL    |       |
+| B_id    | varchar(10) | YES  |     | NULL    |       |
+| Sem     | int         | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+
+
+mysql> create table Author(A_id varchar(10) primary key,A_name varchar(25) not null,Country varchar(20),age int(3));
+Query OK, 0 rows affected, 1 warning (0.03 sec)
+
+mysql> create table Book(Book_id varchar(10) primary key,Book_name varchar(25) not null,A_id varchar(10) references Author(A_id),Publisher varchar(20) not null,B_id varchar(10) references Branch(B_id));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> desc Author;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| A_id    | varchar(10) | NO   | PRI | NULL    |       |
+| A_name  | varchar(25) | NO   |     | NULL    |       |
+| Country | varchar(20) | YES  |     | NULL    |       |
+| age     | int         | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> desc Book;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| Book_id   | varchar(10) | NO   | PRI | NULL    |       |
+| Book_name | varchar(25) | NO   |     | NULL    |       |
+| A_id      | varchar(10) | YES  |     | NULL    |       |
+| Publisher | varchar(20) | NO   |     | NULL    |       |
+| B_id      | varchar(10) | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+
+mysql> create table Borrow(USN char(10) references Student(USN),Book_id varchar(10) references Book(Book_id),Borrow_date date not null);
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> desc Borrow;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| USN         | char(10)    | YES  |     | NULL    |       |
+| Book_id     | varchar(10) | YES  |     | NULL    |       |
+| Borrow_date | date        | NO   |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+
+mysql> insert into Branch values('B101','MCA','Dr.Vandana');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Branch values('B102','MBA','Dr.Shekhar Iyer');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Branch values('B103','CS','Sharath');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Branch values('B104','MC','Sharma');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from Branch;
++------+--------+-----------------+
+| B_id | B_name | HOD             |
++------+--------+-----------------+
+| B101 | MCA    | Dr.Vandana      |
+| B102 | MBA    | Dr.Shekhar Iyer |
+| B103 | CS     | Sharath         |
+| B104 | MC     | Sharma          |
++------+--------+-----------------+
+4 rows in set (0.00 sec)
+
+
+mysql> insert into Student values('4VP22MC001','Akash','Puttur','B101',2);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Student values('4VP22MC002','Akasha','Mangalore','B101',2);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Student values('4VP22MC003','Bhavana','Bangalore','B101',2);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Student values('4VP22MC004','Bhavya','Mangalore','B101',2);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Student values('4VP22MC005','Shiv','Puttur','B101',1);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Student values('4VP22MB005','Ganesh','Puttur','B102',2);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Student values('4VP22MB001','Ganesha','Puttur','B102',2);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from Student;
++------------+---------+-----------+------+------+
+| USN        | S_Name  | Address   | B_id | Sem  |
++------------+---------+-----------+------+------+
+| 4VP22MB001 | Ganesha | Puttur    | B102 |    2 |
+| 4VP22MB005 | Ganesh  | Puttur    | B102 |    2 |
+| 4VP22MC001 | Akash   | Puttur    | B101 |    2 |
+| 4VP22MC002 | Akasha  | Mangalore | B101 |    2 |
+| 4VP22MC003 | Bhavana | Bangalore | B101 |    2 |
+| 4VP22MC004 | Bhavya  | Mangalore | B101 |    2 |
+| 4VP22MC005 | Shiv    | Puttur    | B101 |    1 |
++------------+---------+-----------+------+------+
+7 rows in set (0.00 sec)
+
+mysql> insert into Author values('A_100','Mr.Mahesh','India',35);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Author values('A_101','Mr.Gupto','Singapore',60);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Author values('A_102','Mr.Joshi','India',75);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Author values('A_103','Dr.Shiv','USA',25);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Author values('A_104','Dr.Shiva','India',37);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from Author;
++-------+-----------+-----------+------+
+| A_id  | A_name    | Country   | age  |
++-------+-----------+-----------+------+
+| A_100 | Mr.Mahesh | India     |   35 |
+| A_101 | Mr.Gupto  | Singapore |   60 |
+| A_102 | Mr.Joshi  | India     |   75 |
+| A_103 | Dr.Shiv   | USA       |   25 |
+| A_104 | Dr.Shiva  | India     |   37 |
++-------+-----------+-----------+------+
+5 rows in set (0.00 sec)
+
+mysql> insert into Book values('100','Programming in C','A_101','Sapna Books','B101');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Book values('101','C Programming made easy','A_100','Sapna Books','B101');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Book values('102','Java Programming made easy','A_102','Sapna Books','B101');
+ERROR 1406 (22001): Data too long for column 'Book_name' at row 1
+mysql> insert into Book values('102','Java Programming','A_102','Sapna Books','B101');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Book values('103','Business Management','A_104','Sapna Books','B102');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Book values('104','Accounts Management','A_103','Sapna Books','B102');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Book values('105','C++ Programming','A_101','Sapna Books','B103');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from Book;
++---------+-------------------------+-------+-------------+------+
+| Book_id | Book_name               | A_id  | Publisher   | B_id |
++---------+-------------------------+-------+-------------+------+
+| 100     | Programming in C        | A_101 | Sapna Books | B101 |
+| 101     | C Programming made easy | A_100 | Sapna Books | B101 |
+| 102     | Java Programming        | A_102 | Sapna Books | B101 |
+| 103     | Business Management     | A_104 | Sapna Books | B102 |
+| 104     | Accounts Management     | A_103 | Sapna Books | B102 |
+| 105     | C++ Programming         | A_101 | Sapna Books | B103 |
++---------+-------------------------+-------+-------------+------+
+6 rows in set (0.00 sec)
+
+mysql> insert into Borrow values('4VP22MC001','101','2023-07-10');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Borrow values('4VP22MC001','100','2023-07-10');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Borrow values('4VP22MC001','102','2023-07-09');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Borrow values('4VP22MC002','100','2023-05-09');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Borrow values('4VP22MC002','101','2023-05-09');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Borrow values('4VP22MC002','102','2023-05-10');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Borrow values('4VP22MC003','101','2023-04-10');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Borrow values('4VP22MB001','103','2023-01-01');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Borrow values('4VP22MB001','104','2023-01-02');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Borrow values('4VP22MC003','105','2023-07-02');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Borrow values('4VP22MC005','100','2023-07-02');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Borrow values('4VP22MC005','101','2023-07-01');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Borrow values('4VP22MC005','103','2023-07-15');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Borrow values('4VP22MC005','105','2023-07-15');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from Borrow;
++------------+---------+-------------+
+| USN        | Book_id | Borrow_date |
++------------+---------+-------------+
+| 4VP22MC001 | 101     | 2023-07-10  |
+| 4VP22MC001 | 100     | 2023-07-10  |
+| 4VP22MC001 | 102     | 2023-07-09  |
+| 4VP22MC002 | 100     | 2023-05-09  |
+| 4VP22MC002 | 101     | 2023-05-09  |
+| 4VP22MC002 | 102     | 2023-05-10  |
+| 4VP22MC003 | 101     | 2023-04-10  |
+| 4VP22MB001 | 103     | 2023-01-01  |
+| 4VP22MB001 | 104     | 2023-01-02  |
+| 4VP22MC003 | 105     | 2023-07-02  |
+| 4VP22MC005 | 100     | 2023-07-02  |
+| 4VP22MC005 | 101     | 2023-07-01  |
+| 4VP22MC005 | 103     | 2023-07-15  |
+| 4VP22MC005 | 105     | 2023-07-15  |
++------------+---------+-------------+
+14 rows in set (0.00 sec)
+
+
+1)
+mysql> select USN,S_Name,Address,Sem from Student,Branch where Sem=2 and B_name='MCA';
++------------+---------+-----------+------+
+| USN        | S_Name  | Address   | Sem  |
++------------+---------+-----------+------+
+| 4VP22MB001 | Ganesha | Puttur    |    2 |
+| 4VP22MB005 | Ganesh  | Puttur    |    2 |
+| 4VP22MC001 | Akash   | Puttur    |    2 |
+| 4VP22MC002 | Akasha  | Mangalore |    2 |
+| 4VP22MC003 | Bhavana | Bangalore |    2 |
+| 4VP22MC004 | Bhavya  | Mangalore |    2 |
++------------+---------+-----------+------+
+6 rows in set (0.00 sec)
+
+
+2)
+mysql> select S.USN,S.S_name from Student as S,Borrow as B where S.USN=B.USN and Book_id is null;
++------------+--------+
+| USN        | S_name |
++------------+--------+
+| 4VP22MC004 | Bhavya |
+| 4VP22MB005 | Ganesh |
++------------+--------+
+2 rows in set (0.00 sec)
+
+
+3)
+mysql> select S.USN, S.S_Name, Br.B_name, Bo.Book_name, A_name, B.Borrow_date from 
+    -> Student as S,
+    -> Branch as Br,
+    -> Book as Bo,
+    -> Author as A,
+    -> Borrow as B where 
+    -> Sem=2 and 
+    -> B_name='MCA' and 
+    -> A.A_id=Bo.A_id and
+    -> S.USN=B.USN and 
+    -> B.Book_id is not null 
+    -> and B.Book_id=Bo.Book_id and 
+    -> Br.B_id=S.B_id order by USN;
++------------+---------+--------+-------------------------+-----------+-------------+
+| USN        | S_Name  | B_name | Book_name               | A_name    | Borrow_date |
++------------+---------+--------+-------------------------+-----------+-------------+
+| 4VP22MC001 | Akash   | MCA    | C Programming made easy | Mr.Mahesh | 2023-07-10  |
+| 4VP22MC001 | Akash   | MCA    | Programming in C        | Mr.Gupto  | 2023-07-10  |
+| 4VP22MC001 | Akash   | MCA    | Java Programming        | Mr.Joshi  | 2023-07-09  |
+| 4VP22MC002 | Akasha  | MCA    | Programming in C        | Mr.Gupto  | 2023-05-09  |
+| 4VP22MC002 | Akasha  | MCA    | C Programming made easy | Mr.Mahesh | 2023-05-09  |
+| 4VP22MC002 | Akasha  | MCA    | Java Programming        | Mr.Joshi  | 2023-05-10  |
+| 4VP22MC003 | Bhavana | MCA    | C Programming made easy | Mr.Mahesh | 2023-04-10  |
+| 4VP22MC003 | Bhavana | MCA    | C++ Programming         | Mr.Gupto  | 2023-07-02  |
++------------+---------+--------+-------------------------+-----------+-------------+
+8 rows in set (0.00 sec)
+
+
+
+
+
+
+
+To add foreign key:
+
+create table Student1(
+    -> USN char(10) primary key,
+    -> S_Name varchar(25) not null,
+    -> Address varchar(25) not null,
+    -> B_id varchar(10),
+    -> Sem int(1),
+    -> foreign key(B_id) references Branch(B_id));
+    
+    insert into Student1 select * from Student;
+Query OK, 7 rows affected (0.01 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+
+select * from Student1;
++------------+---------+-----------+------+------+
+| USN        | S_Name  | Address   | B_id | Sem  |
++------------+---------+-----------+------+------+
+| 4VP22MB001 | Ganesha | Puttur    | B102 |    2 |
+| 4VP22MB005 | Ganesh  | Puttur    | B102 |    2 |
+| 4VP22MC001 | Akash   | Puttur    | B101 |    2 |
+| 4VP22MC002 | Akasha  | Mangalore | B101 |    2 |
+| 4VP22MC003 | Bhavana | Bangalore | B101 |    2 |
+| 4VP22MC004 | Bhavya  | Mangalore | B101 |    2 |
+| 4VP22MC005 | Shiv    | Puttur    | B101 |    1 |
++------------+---------+-----------+------+------+
+7 rows in set (0.00 sec)
+
+alter table Student1 rename Student;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> show tables;
++-----------------------------+
+| Tables_in_VP22MC031_library |
++-----------------------------+
+| Author                      |
+| Book                        |
+| Borrow                      |
+| Branch                      |
+| Student                     |
++-----------------------------+
+5 rows in set (0.00 sec)
+
+
+create table Book1(Book_id varchar(10) primary key,Book_name varchar(25) not null,A_id varchar(10),Publisher varchar(20) not null,B_id varchar(10),foreign key(A_id) references Author(A_id),foreign key(B_id) references Branch(B_id));
+
+desc Book1;
+
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| Book_id   | varchar(10) | NO   | PRI | NULL    |       |
+| Book_name | varchar(25) | NO   |     | NULL    |       |
+| A_id      | varchar(10) | YES  | MUL | NULL    |       |
+| Publisher | varchar(20) | NO   |     | NULL    |       |
+| B_id      | varchar(10) | YES  | MUL | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+
+ insert into Book1 select * from Book;
+Query OK, 6 rows affected (0.00 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> select * from Book1;
++---------+-------------------------+-------+-------------+------+
+| Book_id | Book_name               | A_id  | Publisher   | B_id |
++---------+-------------------------+-------+-------------+------+
+| 100     | Programming in C        | A_101 | Sapna Books | B101 |
+| 101     | C Programming made easy | A_100 | Sapna Books | B101 |
+| 102     | Java Programming        | A_102 | Sapna Books | B101 |
+| 103     | Business Management     | A_104 | Sapna Books | B102 |
+| 104     | Accounts Management     | A_103 | Sapna Books | B102 |
+| 105     | C++ Programming         | A_101 | Sapna Books | B103 |
++---------+-------------------------+-------+-------------+------+
+6 rows in set (0.01 sec)
+
+create table Borrow1(USN char(10),Book_id varchar(10),Borrow_date date,
+foreign key(USN) references Student(USN),foreign key(Book_id) references Book(Book_id));
+
+drop table Borrow;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> alter table Borrow1 rename Borrow;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> select * from Borrow;
++------------+---------+-------------+
+| USN        | Book_id | Borrow_date |
++------------+---------+-------------+
+| 4VP22MC001 | 101     | 2023-07-10  |
+| 4VP22MC001 | 100     | 2023-07-10  |
+| 4VP22MC001 | 102     | 2023-07-09  |
+| 4VP22MC002 | 100     | 2023-05-09  |
+| 4VP22MC002 | 101     | 2023-05-09  |
+| 4VP22MC002 | 102     | 2023-05-10  |
+| 4VP22MC003 | 101     | 2023-04-10  |
+| 4VP22MB001 | 103     | 2023-01-01  |
+| 4VP22MB001 | 104     | 2023-01-02  |
+| 4VP22MC003 | 105     | 2023-07-02  |
+| 4VP22MC005 | 100     | 2023-07-02  |
+| 4VP22MC005 | 101     | 2023-07-01  |
+| 4VP22MC005 | 103     | 2023-07-15  |
+| 4VP22MC005 | 105     | 2023-07-15  |
+| 4VP22MC004 | NULL    | NULL        |
+| 4VP22MB005 | NULL    | NULL        |
++------------+---------+-------------+
+16 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+4) Display the number of books written by each author.
+
+mysql> select A_id,count(A_id) from Book group by A_id;
++-------+-------------+
+| A_id  | count(A_id) |
++-------+-------------+
+| A_100 |           1 |
+| A_101 |           2 |
+| A_102 |           1 |
+| A_103 |           1 |
+| A_104 |           1 |
++-------+-------------+
+5 rows in set (0.00 sec)
+
+
+mysql> select Book.A_id,A_name,count(Book.A_id) as Number_Books from Book
+join Author on Book.A_id=Author.A_id 
+group by A_id,A_name;
+
+mysql> select Book.A_id,A_name,count(Book.A_id) as Number_Books from Book
+    -> join Author on Book.A_id=Author.A_id 
+    -> group by A_id,A_name;
++-------+-----------+--------------+
+| A_id  | A_name    | Number_Books |
++-------+-----------+--------------+
+| A_100 | Mr.Mahesh |            1 |
+| A_101 | Mr.Gupto  |            2 |
+| A_102 | Mr.Joshi  |            1 |
+| A_103 | Dr.Shiv   |            1 |
+| A_104 | Dr.Shiva  |            1 |
++-------+-----------+--------------+
+5 rows in set (0.00 sec)
+
+
+
+
+
+
+5) Display the student details who borrowed more than two books.
+
+mysql> select Student.USN,S_Name,count(Book_id) from Student 
+	join Borrow on Student.USN=Borrow.USN 
+	group by USN,S_Name 
+	having count(Book_id)>2;
+
++------------+--------+----------------+
+| USN        | S_Name | count(Book_id) |
++------------+--------+----------------+
+| 4VP22MC001 | Akash  |              3 |
+| 4VP22MC002 | Akasha |              3 |
+| 4VP22MC005 | Shiv   |              4 |
++------------+--------+----------------+
+3 rows in set (0.00 sec)
+
+
+6) Display the Student details who borrowed books of more than one Author.
+
+select Student.USN, Student.S_Name, Borrow.Book_id, Book.A_id from Student 
+	join Borrow on Student.USN=Borrow.USN
+	join Book on Borrow.Book_id=Book.Book_id
+	group by Student.USN, Student.S_Name, Borrow.Book_id, Book.A_id
+	having count(Book.A_id)>1;
+	
+	
+//it works
+select Student.USN, Student.S_Name from Student 
+	join Borrow on Student.USN=Borrow.USN
+	join Book on Borrow.Book_id=Book.Book_id
+	group by Student.USN, Student.S_Name
+	having count(Book.A_id)>1;	
+	
++------------+---------+
+| USN        | S_Name  |
++------------+---------+
+| 4VP22MC001 | Akash   |
+| 4VP22MC002 | Akasha  |
+| 4VP22MC003 | Bhavana |
+| 4VP22MC005 | Shiv    |
+| 4VP22MB001 | Ganesha |
++------------+---------+
+5 rows in set (0.00 sec)
+
+	
+
+
+
+7) Display the book names in descending order of their names
+
+mysql> select Book_name,Book_id from Book order by Book_name desc;
++-------------------------+---------+
+| Book_name               | Book_id |
++-------------------------+---------+
+| Programming in C        | 100     |
+| Java Programming        | 102     |
+| C++ Programming         | 105     |
+| C Programming made easy | 101     |
+| Business Management     | 103     |
+| Accounts Management     | 104     |
++-------------------------+---------+
+6 rows in set (0.00 sec)
+
+8) List the details of students who borrowed the books of same publisher
+
+select Student.USN, Student.S_Name from Student
+	join Borrow on Student.USN=Borrow.USN 
+	join Book on Borrow.Book_id=Book.Book_id
+	group by Student.USN,Student.S_Name
+	having Publisher='Sapna Books';
+	
+	
+	
+
+select Student.USN,S_Name from Student,Borrow,Book where
+	Student.USN=Borrow.USN and
+	Borrow.Book_id=Book.Book_id and
+	Publisher="Sapna Books"
+	group by Student.USN,Student.S_Name;
+	
++------------+---------+
+| USN        | S_Name  |
++------------+---------+
+| 4VP22MC001 | Akash   |
+| 4VP22MC002 | Akasha  |
+| 4VP22MC005 | Shiv    |
+| 4VP22MC003 | Bhavana |
+| 4VP22MB001 | Ganesha |
++------------+---------+
+5 rows in set (0.00 sec)
+
+
+
+
+
+
